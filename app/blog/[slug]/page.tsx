@@ -21,7 +21,7 @@ import { oneDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
 
-export const dynamicParams = true;
+export const dynamicParams = false;
 
 export const generateStaticParams = async () => {
   const allPosts: Post[] = await getAllPosts();
