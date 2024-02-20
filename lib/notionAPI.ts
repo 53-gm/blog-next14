@@ -8,7 +8,7 @@ import {
   QueryDatabaseResponse,
 } from "@notionhq/client/build/src/api-endpoints";
 import { NotionToMarkdown } from "notion-to-md";
-import { cache } from "react";
+//import { cache } from "react";
 
 //export const revalidate: number = 60 * 60 * 2;
 
@@ -86,7 +86,7 @@ const buildPost = (pageObject: any): Post => {
   return post;
 };
 
-export const getAllPosts = cache(async (): Promise<Post[]> => {
+export const getAllPosts = async (): Promise<Post[]> => {
   let results: Array<
     | PageObjectResponse
     | PartialPageObjectResponse
@@ -132,48 +132,47 @@ export const getAllPosts = cache(async (): Promise<Post[]> => {
     .map((pageObject) => buildPost(pageObject));
 
   return allPosts;
-});
+};
 
-export const getPosts = cache(
-  async (
-    pageSize: number = 10,
-    startIndex: string | undefined = undefined
-  ): Promise<Post[]> => {
-    if (pageSize <= 0) {
-      return [];
-    }
-
-    const params: QueryDatabaseParameters = {
-      database_id: String(process.env.NOTION_DATABASE_ID),
-      page_size: pageSize,
-      start_cursor: startIndex,
-      filter: {
-        property: "Published",
-        checkbox: {
-          equals: true,
-        },
-      },
-      sorts: [
-        {
-          property: "Date",
-          timestamp: "created_time",
-          direction: "descending",
-        },
-      ],
-    };
-
-    const databaseResponse: QueryDatabaseResponse =
-      await notion.databases.query(params);
-
-    const posts = databaseResponse.results
-      .filter((pageObject) => isValidPost(pageObject))
-      .map((pageObject) => buildPost(pageObject));
-
-    return posts;
+export const getPosts = async (
+  pageSize: number = 10,
+  startIndex: string | undefined = undefined
+): Promise<Post[]> => {
+  if (pageSize <= 0) {
+    return [];
   }
-);
 
-export const getPostBySlug = cache(async (slug: string) => {
+  const params: QueryDatabaseParameters = {
+    database_id: String(process.env.NOTION_DATABASE_ID),
+    page_size: pageSize,
+    start_cursor: startIndex,
+    filter: {
+      property: "Published",
+      checkbox: {
+        equals: true,
+      },
+    },
+    sorts: [
+      {
+        property: "Date",
+        timestamp: "created_time",
+        direction: "descending",
+      },
+    ],
+  };
+
+  const databaseResponse: QueryDatabaseResponse = await notion.databases.query(
+    params
+  );
+
+  const posts = databaseResponse.results
+    .filter((pageObject) => isValidPost(pageObject))
+    .map((pageObject) => buildPost(pageObject));
+
+  return posts;
+};
+
+export const getPostBySlug = async (slug: string) => {
   const databaseResponse: QueryDatabaseResponse = await notion.databases.query({
     database_id: String(process.env.NOTION_DATABASE_ID),
     filter: {
@@ -193,17 +192,17 @@ export const getPostBySlug = cache(async (slug: string) => {
   // }
 
   return buildPost(res);
-});
+};
 
 export const getLatestBlockByID = async (blockID: string) => {
   return await notion.blocks.retrieve({ block_id: blockID });
 };
 
-export const getAllBlocksByID = cache(async (blockID: string) => {
+export const getAllBlocksByID = async (blockID: string) => {
   return await notion.blocks.children.list({
     block_id: blockID,
   });
-});
+};
 
 // export const getPostContentByID = cache(async (pageID: string) => {
 //   const mdBlocks = await n2m.pageToMarkdown(pageID);
@@ -218,5 +217,5 @@ export const getPostContentByID = async (pageID: string) => {
   const mdString = n2m.toMarkdownString(mdBlocks).parent;
   const now = new Date(Date.now());
 
-  return {mdString, now};
+  return { mdString, now };
 };
