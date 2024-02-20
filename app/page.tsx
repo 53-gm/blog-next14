@@ -3,6 +3,8 @@ import Hero from "@/components/hero/hero";
 import Posts from "@/components/posts/posts";
 import { Post, getAllPosts } from "@/lib/notionAPI";
 
+export const revalidate = 0;
+
 const Home = async () => {
   const test: Post[] = await getAllPosts();
   return (
