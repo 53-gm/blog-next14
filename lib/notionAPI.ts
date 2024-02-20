@@ -210,10 +210,8 @@ export const getAllBlocksByID = async (blockID: string) => {
 
 export const getPostContentByID = async (pageID: string) => {
   const { results } = await getAllBlocksByID(pageID);
-
   const mdBlocks = await n2m.blocksToMarkdown(results);
   const mdString = n2m.toMarkdownString(mdBlocks).parent;
-  const now = new Date(Date.now());
 
-  return { mdString, now };
+  return mdString;
 };

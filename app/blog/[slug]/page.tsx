@@ -22,7 +22,7 @@ import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
 
 export const dynamicParams = false;
-export const revalidate = 10;
+export const revalidate = 0;
 
 export const generateStaticParams = async () => {
   const allPosts: Post[] = await getAllPosts();
@@ -38,10 +38,6 @@ const Post = async ({ params }: { params: { slug: string } }) => {
   const postContent = await getPostContentByID(id);
 
   return (
-    <>
-    <div>
-    {postContent.now.toString()}
-    </div>
     <Container>
       <article>
         <PostHeader title={title} subtitle="Blog Article" date={date} />
@@ -108,7 +104,7 @@ const Post = async ({ params }: { params: { slug: string } }) => {
                 remarkPlugins={[remarkMath]}
                 rehypePlugins={[rehypeKatex]}
               >
-                {postContent.mdString}
+                {postContent}
               </Markdown>
             </PostBody>
           </TwoColumnMain>
@@ -118,7 +114,6 @@ const Post = async ({ params }: { params: { slug: string } }) => {
         </TwoColumn>
       </article>
     </Container>
-    </>
   );
 };
 
