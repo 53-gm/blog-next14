@@ -36,9 +36,6 @@ n2m.setCustomTransformer("image", async (block) => {
     const expiryTime = Date.parse(image.file.expiry_time);
     const now = Date.now();
 
-    console.log("now:" + new Date(now));
-    console.log("expiryTime:" + new Date(expiryTime));
-
     if (expiryTime < now) {
       return await getLatestBlockByID(image.id);
     }
@@ -219,8 +216,7 @@ export const getPostContentByID = async (pageID: string) => {
 
   const mdBlocks = await n2m.blocksToMarkdown(results);
   const mdString = n2m.toMarkdownString(mdBlocks).parent;
+  const now = new Date(Date.now());
 
-  console.log("Post request" + new Date(Date.now()));
-
-  return mdString;
+  return {mdString, now};
 };

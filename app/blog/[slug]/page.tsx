@@ -37,6 +37,10 @@ const Post = async ({ params }: { params: { slug: string } }) => {
   const postContent = await getPostContentByID(id);
 
   return (
+    <>
+    <div>
+    {postContent.now.toString()}
+    </div>
     <Container>
       <article>
         <PostHeader title={title} subtitle="Blog Article" date={date} />
@@ -103,7 +107,7 @@ const Post = async ({ params }: { params: { slug: string } }) => {
                 remarkPlugins={[remarkMath]}
                 rehypePlugins={[rehypeKatex]}
               >
-                {postContent}
+                {postContent.mdString}
               </Markdown>
             </PostBody>
           </TwoColumnMain>
@@ -113,6 +117,7 @@ const Post = async ({ params }: { params: { slug: string } }) => {
         </TwoColumn>
       </article>
     </Container>
+    </>
   );
 };
 
