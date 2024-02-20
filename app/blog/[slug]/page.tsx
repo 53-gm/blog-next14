@@ -22,6 +22,7 @@ import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
 
 export const dynamicParams = false;
+export const revalidate = 10;
 
 export const generateStaticParams = async () => {
   const allPosts: Post[] = await getAllPosts();

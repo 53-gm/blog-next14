@@ -10,8 +10,6 @@ import {
 import { NotionToMarkdown } from "notion-to-md";
 //import { cache } from "react";
 
-//export const revalidate: number = 60 * 60 * 2;
-
 export type Post = {
   id: string;
   title: string;
