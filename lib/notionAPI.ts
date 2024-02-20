@@ -220,5 +220,7 @@ export const getPostContentByID = async (pageID: string) => {
   const mdBlocks = await n2m.blocksToMarkdown(results);
   const mdString = n2m.toMarkdownString(mdBlocks).parent;
 
+  console.log("Post request" + new Date(Date.now()));
+
   return mdString;
 };
