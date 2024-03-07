@@ -1,28 +1,12 @@
-import Image from "next/image";
-import Link from "next/link";
+import { PostMetaData } from "@/lib/types";
+import Poster from "../poster/poster";
 import styles from "./posts.module.css";
 
-import { Post } from "@/lib/notionAPI";
-
-const Posts = ({ posts }: Readonly<{ posts: Post[] }>) => {
+const Posts = ({ posts }: { posts: PostMetaData[] }) => {
   return (
     <div className={styles.gridContainer}>
-      {posts.map(({ title, slug, thumbnail, id }) => (
-        <article className={styles.post} key={id}>
-          <Link href={`/blog/${slug}`}>
-            <figure>
-              <Image
-                src={thumbnail ? thumbnail : "/vercel.svg"}
-                alt=""
-                fill={true}
-                sizes="(min-width: 1152px) 576px, 50vw"
-                style={{objectFit:"cover"}}
-                priority={true}
-              />
-            </figure>
-            <h2>{title}</h2>
-          </Link>
-        </article>
+      {posts.map((post) => (
+        <Poster {...post} key={post.slug} />
       ))}
     </div>
   );

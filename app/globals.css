@@ -1,5 +1,4 @@
 :root {
-  /* カラー（色） */
   --white: #ffffff;
   --gray-10: #eeeeee;
   --gray-25: #aaaaaa;
@@ -8,7 +7,6 @@
   --black: #222222;
   --accent: #0d87e0;
 
-  /* タイポグラフィ（フォントサイズ） */
   --body: clamp(1rem, 0.95rem + 0.2vw, 1.125rem); /* 16-18px */
   --display: clamp(4.5rem, 1.83rem + 11.34vw, 10rem); /* 72-160 */
   --heading1: clamp(2rem, 1.3rem + 3vw, 4rem); /* 32-64px */
@@ -17,7 +15,6 @@
   --small-heading2: clamp(0.875rem, 4vw - 1rem, 1.6875rem); /* 14-27px */
   --small-heading3: calc(var(--small-heading2) * 0.86); /* 12-23px */
 
-  /* スペース（余白・間隔） */
   --space-xs: clamp(1.25rem, 1rem + 0.98vw, 1.875rem); /* 20-30px */
   --space-sm: calc(var(--space-xs) * 1.5); /* 30-45px */
   --space-md: calc(var(--space-xs) * 2); /* 40-60px */
@@ -26,7 +23,6 @@
   --space-jump: clamp(1.25rem, 0.35rem + 3.8vw, 3.75rem); /* 20-60px */
 }
 
-/* 基本設定 */
 body {
   color: var(--black);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,

@@ -1,53 +1,57 @@
 import Container from "@/components/container/container";
+import ConvertPage from "@/components/convert-page/conver-page";
 import PostBody from "@/components/post-body/post-body";
 import PostHeader from "@/components/post-header/post-header";
 import PostTags from "@/components/post-tags/post-tags";
+import TopicsCard from "@/components/topics-card/topics-card";
 import {
   TwoColumn,
   TwoColumnMain,
   TwoColumnSidebar,
 } from "@/components/two-column/two-column";
+import { getAllSlugs, getPostBySlug } from "@/lib/api";
+import { extractText } from "@/lib/extra-text";
 import {
-  Post,
-  getAllPosts,
-  getPostBySlug,
-  getPostContentByID,
-} from "@/lib/notionAPI";
+  eyecatchLocal,
+  openGraphMetadata,
+  siteMeta,
+  twitterMetadata,
+} from "@/lib/metadata";
+import { Post } from "@/lib/types";
 import "katex/dist/katex.min.css";
 import Image from "next/legacy/image";
-import Markdown from "react-markdown";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { oneDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
-import rehypeKatex from "rehype-katex";
-import remarkMath from "remark-math";
 
 export const dynamicParams = false;
-export const revalidate = 0;
 
 export const generateStaticParams = async () => {
-  const allPosts: Post[] = await getAllPosts();
-  return allPosts.map((post) => ({ slug: post.slug }));
+  const allSlugs: string[] = await getAllSlugs();
+  return allSlugs.map((slug) => ({ slug: slug }));
 };
 
-const Post = async ({ params }: { params: { slug: string } }) => {
+const PostPage = async ({ params }: { params: { slug: string } }) => {
   const { slug } = params;
   const post: Post = await getPostBySlug(slug);
 
-  const { title, date, description, tags, id, thumbnail } = post;
-
-  const postContent = await getPostContentByID(id);
+  const {
+    title,
+    publishedAt: pubDate,
+    updatedAt: upDate,
+    tags,
+    eyecatch,
+    content,
+  } = post;
 
   return (
     <Container>
       <article>
-        <PostHeader title={title} subtitle="Blog Article" date={date} />
+        <PostHeader title={title} subtitle="Blog Article" date={pubDate} />
 
         <figure>
           <Image
-            key={thumbnail}
-            src={thumbnail ? thumbnail : "/vercel.svg"}
-            width={500}
-            height={200}
+            key={eyecatch ? eyecatch.url : eyecatchLocal.url}
+            src={eyecatch ? eyecatch.url : eyecatchLocal.url}
+            width={eyecatch ? eyecatch.width : eyecatchLocal.width}
+            height={eyecatch ? eyecatch.height : eyecatchLocal.height}
             alt=""
             layout="responsive"
             sizes="(min-width: 1152px) 1152px, 100vw"
@@ -58,58 +62,12 @@ const Post = async ({ params }: { params: { slug: string } }) => {
         <TwoColumn>
           <TwoColumnMain>
             <PostBody>
-              <Markdown
-                components={{
-                  code({
-                    children,
-                    className,
-                    node,
-                    ...rest
-                  }: {
-                    children?: React.ReactNode;
-                    className?: any;
-                    node?: any;
-                  }) {
-                    const match = /language-(\w+)/.exec(className || "");
-                    return match ? (
-                      <SyntaxHighlighter
-                        {...rest}
-                        PreTag="div"
-                        language={match[1]}
-                        style={oneDark}
-                      >
-                        {String(children).replace(/\n$/, "")}
-                      </SyntaxHighlighter>
-                    ) : (
-                      <code {...rest} className={className}>
-                        {children}
-                      </code>
-                    );
-                  },
-                  img({ src, ...rest }) {
-                    return (
-                      <Image
-                        key={src}
-                        src={src ? src : "/vercel.svg"}
-                        width={500}
-                        height={200}
-                        alt=""
-                        layout="responsive"
-                        sizes="(min-width: 1152px) 1152px, 100vw"
-                        priority
-                      />
-                    );
-                  },
-                }}
-                remarkPlugins={[remarkMath]}
-                rehypePlugins={[rehypeKatex]}
-              >
-                {postContent}
-              </Markdown>
+              <PostTags tags={tags} />
+              <ConvertPage content={content} />
             </PostBody>
           </TwoColumnMain>
           <TwoColumnSidebar>
-            <PostTags tags={tags} />
+            <TopicsCard />
           </TwoColumnSidebar>
         </TwoColumn>
       </article>
@@ -117,4 +75,54 @@ const Post = async ({ params }: { params: { slug: string } }) => {
   );
 };
 
-export default Post;
+const { siteTitle, siteUrl } = siteMeta;
+
+export const generateMetadata = async ({
+  params,
+}: {
+  params: { slug: string };
+}) => {
+  const slug = params.slug;
+  const post: Post = await getPostBySlug(slug);
+  const {
+    title: pageTitle,
+    publishedAt: pubDate,
+    updatedAt: upDate,
+    content,
+  } = post;
+
+  const pageDesc = extractText(content);
+  const eyecatch = post.eyecatch ?? eyecatchLocal;
+
+  const ogpTitle = `${pageTitle} | ${siteTitle}`;
+  const ogpUrl = new URL(`/blog/${slug}`, siteUrl).toString();
+
+  const metadata = {
+    title: pageTitle,
+    description: pageDesc,
+
+    openGraph: {
+      ...openGraphMetadata,
+      title: ogpTitle,
+      description: pageDesc,
+      url: ogpUrl,
+      images: [
+        {
+          url: eyecatch.url,
+          width: eyecatch.width,
+          height: eyecatch.height,
+        },
+      ],
+    },
+    twitter: {
+      ...twitterMetadata,
+      title: ogpTitle,
+      description: pageDesc,
+      images: [eyecatch.url],
+    },
+  };
+
+  return metadata;
+};
+
+export default PostPage;

@@ -20,10 +20,16 @@
 /* image */
 .image {
   width: 100%;
+  padding: 10px;
+}
+
+.image img {
+  border-radius: 50%;
 }
 
 @media (min-width: 768px) {
   .image {
     width: 50%;
+    padding: 40px;
   }
 }

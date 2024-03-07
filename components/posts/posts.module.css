@@ -1,9 +1,19 @@
 .gridContainer {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: var(--space-jump);
   margin-top: var(--space-xs);
   margin-bottom: var(--space-lg);
+}
+
+@media (min-width: 768px) {
+  .gridContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--space-jump);
+    margin-top: var(--space-xs);
+    margin-bottom: var(--space-lg);
+  }
 }
 
 .post h2 {

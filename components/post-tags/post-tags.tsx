@@ -1,22 +1,15 @@
-import { faFolderOpen } from "@fortawesome/free-regular-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Link from "next/link";
+import { Tag } from "@/lib/types";
+import SingleTag from "../tag/tag";
 import styles from "./post-tags.module.css";
 
-const PostTags = ({ tags }: Readonly<{ tags: string[] }>) => {
+const PostTags = ({ tags }: Readonly<{ tags: Tag[] }>) => {
   return (
     <div className={styles.flexContainer}>
-      <h3 className={styles.heading}>
-        <FontAwesomeIcon icon={faFolderOpen} />
-        <span className="sr-only">Tags</span>
-      </h3>
-      <ul className={styles.list}>
-        {tags.map((tag) => (
-          <li key={tag}>
-            <Link href={`/blog/tag/${tag}/1`}>{tag}</Link>
-          </li>
-        ))}
-      </ul>
+      <div className={styles.list}>
+        {tags != undefined ? tags.map((tag) => (
+          <SingleTag {...tag} key={tag.id} />
+        )) : null}
+      </div>
     </div>
   );
 };

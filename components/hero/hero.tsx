@@ -1,4 +1,4 @@
-import cube from "@/public/next.svg";
+import cube from "@/public/mdy.jpg";
 import Image from "next/legacy/image";
 import styles from "./hero.module.css";
 
